@@ -2,5 +2,8 @@
 {
     public enum TicketStatus
     {
+        Offen,
+        InBearbeitung,
+        Abgeschlossen
     }
 }
