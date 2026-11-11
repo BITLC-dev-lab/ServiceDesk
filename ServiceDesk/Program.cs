@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using ServiceDesk.Data;
+
 namespace ServiceDesk
 {
     public class Program
@@ -6,7 +9,11 @@ namespace ServiceDesk
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Die Verbindung lesen und den DbContext konfigurieren 
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Services vor dem Build registrieren!
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
