@@ -1,6 +1,7 @@
 ﻿namespace ServiceDesk.Models
 {
-    public class Ticket
+    public class Ticketcs
     {
+        
     }
 }

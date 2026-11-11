@@ -2,7 +2,7 @@
 
 namespace ServiceDesk.Models
 {
-    public class Mitarbeiter
+    public class Employer
     {
         public int Id { get; set; }
 
