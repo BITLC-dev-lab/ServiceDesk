@@ -14,7 +14,7 @@ public class TicketsService
         _context = context;
     }
 
-    internal async Task<List<TicketListViewModel>> GetAllTicketsAsync(TicketStatus? status, TicketPriority? priority)
+    public async Task<List<TicketListViewModel>> GetAllTicketsAsync(TicketStatus? status, TicketPriority? priority)
     {
         var query = _context.Tickets.AsNoTracking();
 
