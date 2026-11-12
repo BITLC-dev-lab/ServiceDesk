@@ -1,11 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using ServiceDesk.Models;
 using System.Diagnostics;
+using ServiceDesk.Data;
 
 namespace ServiceDesk.Controllers
 {
     public class HomeController : Controller
     {
+        private ApplicationDbContext _context;
+        public HomeController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
             return View();
