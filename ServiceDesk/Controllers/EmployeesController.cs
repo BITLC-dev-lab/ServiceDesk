@@ -35,5 +35,39 @@ namespace ServiceDesk.Controllers
             return View(employee);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return View(employee);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Employee updatedEmployee)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(updatedEmployee);
+            }
+
+            var employee = _context.Employees.Find(updatedEmployee.Id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            employee.FirstName = updatedEmployee.FirstName;
+            employee.LastName = updatedEmployee.LastName;
+            employee.Email = updatedEmployee.Email; 
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
     }
 }
+
