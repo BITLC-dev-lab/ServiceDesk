@@ -36,12 +36,8 @@ namespace ServiceDesk.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
             var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
@@ -49,22 +45,29 @@ namespace ServiceDesk.Controllers
             }
             return View(employee);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Employee employee)
+        public async Task<IActionResult> Edit(Employee updatedEmployee)
         {
-            if (id != employee.Id)
+            if (!ModelState.IsValid)
+            {
+                return View(updatedEmployee);
+            }
+
+            var employee = _context.Employees.Find(updatedEmployee.Id);
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                _context.Employees.Update(employee);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(employee);
+            employee.FirstName = updatedEmployee.FirstName;
+            employee.LastName = updatedEmployee.LastName;
+            employee.Email = updatedEmployee.Email; 
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
     }
 }
+
