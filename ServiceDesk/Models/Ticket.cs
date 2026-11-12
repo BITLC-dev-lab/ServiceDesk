@@ -6,7 +6,6 @@ namespace ServiceDesk.Models
 {
     public class Ticket
     {
-        [Column("TicketId")]
         public int Id { get; set; }
         [Required(ErrorMessage = "Der Titel ist erforderlich.")]
         [StringLength(100, ErrorMessage = "Der Titel darf maximal 100 Zeichen lang sind.")]
