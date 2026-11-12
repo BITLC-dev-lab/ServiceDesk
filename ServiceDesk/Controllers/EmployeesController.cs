@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceDesk.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServiceDesk.Controllers
 {
@@ -10,9 +11,10 @@ namespace ServiceDesk.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var employees = await _context.Employees.ToListAsync();
+            return View(employees);
         }
     }
 }
