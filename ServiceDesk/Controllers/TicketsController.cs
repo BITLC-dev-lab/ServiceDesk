@@ -1,18 +1,20 @@
-﻿using ServiceDesk.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using ServiceDesk.Services;
+using ServiceDesk.Models.Enums;
 
 namespace ServiceDesk.Controllers
 {
     public class TicketsController : Controller
     {
-        private ApplicationDbContext _context;
-        public TicketsController(ApplicationDbContext context)
+        private readonly TicketsService _ticketsService;
+        public TicketsController(TicketsService ticketsService)
         {
-            _context = context;
+            _ticketsService = ticketsService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index(TicketStatus? status, TicketPriority? priority)
         {
-            return View();
+            var tickets = await _ticketsService.GetAllTicketsAsync(status, priority);
+            return View(tickets);
         }
     }
 }

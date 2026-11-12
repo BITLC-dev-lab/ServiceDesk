@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ServiceDesk.Data;
+using ServiceDesk.Services;
 
 namespace ServiceDesk
 {
@@ -15,6 +16,7 @@ namespace ServiceDesk
 
             // Services vor dem Build registrieren!
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<TicketsService>();
 
             var app = builder.Build();
 
