@@ -7,7 +7,7 @@ namespace ServiceDesk.Controllers
 {
     public class HomeController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
         public HomeController(ApplicationDbContext context)
         {
             _context = context;
