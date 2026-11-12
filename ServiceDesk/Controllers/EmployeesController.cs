@@ -55,7 +55,7 @@ namespace ServiceDesk.Controllers
                 return View(updatedEmployee);
             }
 
-            var employee = _context.Employees.Find(updatedEmployee.Id);
+            var employee = await _context.Employees.FindAsync(updatedEmployee.Id);
             if (employee == null)
             {
                 return NotFound();
@@ -68,6 +68,25 @@ namespace ServiceDesk.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            if (await _context.Tickets.AnyAsync(t => t.EmployeeId == id))
+            {
+                TempData["ErrorMessage"] = "Dieser Mitarbeiter kann nicht gelöscht werden, da er noch Tickets zugewiesen hat.";
+                return RedirectToAction("Index");
+            }
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
     }
 }
 
