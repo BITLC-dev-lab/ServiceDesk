@@ -14,7 +14,7 @@ public class TicketsService
         _context = context;
     }
 
-    public async Task<List<TicketListViewModel>> GetAllTicketsAsync(TicketStatus? status, TicketPriority? priority)
+    public async Task<List<TicketListViewModel>> GetAllTickets(TicketStatus? status, TicketPriority? priority)
     {
         var query = _context.Tickets.AsNoTracking();
 
@@ -41,5 +41,17 @@ public class TicketsService
             })
             .ToListAsync();
         return tickets;
+    }
+
+    public async Task<TicketFormViewModel> GetTicketFormViewModel()
+    {
+        var viemodel = new TicketFormViewModel
+        {
+
+            Priorities = Enum.GetValues<TicketPriority>().ToList(),
+            Categories = await _context.Categories.ToListAsync(),
+            Employees = await _context.Employees.ToListAsync()
+        };
+        return viemodel;
     }
 }
