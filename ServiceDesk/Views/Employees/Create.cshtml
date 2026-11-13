@@ -1,0 +1,48 @@
+﻿@model ServiceDesk.Models.Employee
+
+<div class="form-page">
+    <a class="back-link d-inline-block mb-3" asp-action="Index">← Zurück zu Mitarbeiter</a>
+    <h1 class="h3 mb-1">Neuer Mitarbeiter</h1>
+    <p class="text-secondary mb-4">Neuen Mitarbeiter erfassen.</p>
+
+    <form class="card sd-card" asp-action="Create" method="post">
+        <div class="card-body p-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="FirstName" class="form-label fw-medium">
+                        Vorname <span class="text-danger">*</span>
+                    </label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="LastName" class="form-label fw-medium">
+                        Nachname <span class="text-danger">*</span>
+                    </label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-medium">
+                    E-Mail <span class="text-danger">*</span>
+                </label>
+                <input asp-for="Email" type="email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-end gap-2 p-3">
+            <a class="btn btn-outline-secondary" asp-action="Index">Abbrechen</a>
+            <button class="btn btn-primary" type="submit">Speichern</button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
