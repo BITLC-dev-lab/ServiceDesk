@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceDesk.Data;
+using ServiceDesk.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServiceDesk.Controllers
 {
@@ -11,9 +13,30 @@ namespace ServiceDesk.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+        {
+            var categories = await _context.Categories.ToListAsync();
+            return View(categories);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
         {
             return View();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(category);
+        }
+
     }
 }
