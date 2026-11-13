@@ -71,6 +71,24 @@ namespace ServiceDesk.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            if (await _context.Tickets.AnyAsync(t => t.CategoryId == id))
+            {
+                TempData["ErrorMessage"] = "Diese Kategorie kann nicht gelöscht werden, da sie noch zugewiesene Tickets in Bearbeitung hat.";
+                return RedirectToAction("Index");
+            }
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
 
     }
 }
