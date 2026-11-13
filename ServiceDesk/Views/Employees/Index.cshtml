@@ -1,5 +1,74 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model IEnumerable<ServiceDesk.Models.Employee>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mb-4">
+        @TempData["ErrorMessage"]
+    </div>
 }
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Mitarbeiter</h1>
+        <p class="text-secondary small mb-0">Datensätze übersichtlich verwalten</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">+ Neuer Mitarbeiter</a>
+</div>
+
+<div class="card sd-card">
+    <div class="table-responsive">
+        <table class="table sd-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>E-Mail</th>
+                    <th class="text-end">Aktionen</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in Model)
+                {
+                    <tr>
+                        <td class="fw-medium">@employee.Id</td>
+                        <td>@employee.FirstName @employee.LastName</td>
+                        <td>
+                            <a href="mailto:@employee.Email">@employee.Email</a>
+                        </td>
+                        <td class="text-end">
+                            <div class="action-links justify-content-end">
+                                <a asp-action="Edit" asp-route-id="@employee.Id">Bearbeiten</a>
+                                <button type="button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal-@employee.Id">
+                                    Löschen
+                                </button>
+                            </div>
+                            <div class="modal fade" id="deleteModal-@employee.Id" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered text-start">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h2 class="modal-title fs-5">Löschen bestätigen</h2>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="mb-2">Möchten Sie diesen Eintrag wirklich löschen?</p>
+                                            <p class="small text-secondary mb-0">@employee.FirstName @employee.LastName</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                Abbrechen
+                                            </button>
+                                            <form asp-action="Delete" asp-route-id="@employee.Id" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger">Löschen</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
