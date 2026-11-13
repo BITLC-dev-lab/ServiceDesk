@@ -38,5 +38,39 @@ namespace ServiceDesk.Controllers
             return View(category);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Category updatedCategory)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(updatedCategory);
+            }
+
+            var category = await _context.Categories.FindAsync(updatedCategory.Id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            category.Name = updatedCategory.Name;
+            category.Description = updatedCategory.Description;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+
     }
 }
