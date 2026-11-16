@@ -77,5 +77,13 @@ namespace ServiceDesk.Controllers
                     return StatusCode(500, "An unexpected error occurred.");
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _ticketsService.DeleteTicketAsync(id);
+            return RedirectToAction("Index");
+        }
     }
 }
