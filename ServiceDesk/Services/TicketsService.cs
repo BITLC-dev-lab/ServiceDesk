@@ -54,4 +54,18 @@ public class TicketsService
         };
         return viemodel;
     }
+
+    internal async Task CreateTicket(TicketFormViewModel viewModel)
+    {
+        _context.Tickets.Add(new Models.Ticket
+        {
+            Title = viewModel.Title,
+            Description = viewModel.Description,
+            Status = TicketStatus.Offen,
+            Priority = viewModel.Priority!.Value,
+            CreatedAt = DateTime.Now,
+            CategoryId = viewModel.CategoryId!.Value,
+        });
+        await _context.SaveChangesAsync();
+    }
 }

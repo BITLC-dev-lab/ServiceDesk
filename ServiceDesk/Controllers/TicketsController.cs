@@ -29,11 +29,13 @@ namespace ServiceDesk.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(TicketFormViewModel viewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction("Index");
+                return View(viewModel);
             }
-            return View(viewModel);
+            await _ticketsService.CreateTicket(viewModel);
+            return RedirectToAction("Index");
         }
+
     }
 }
