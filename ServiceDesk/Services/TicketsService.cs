@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using ServiceDesk.Data;
 using ServiceDesk.ViewModels;
 using ServiceDesk.Models.Enums;
+using Microsoft.AspNetCore.Http.HttpResults;
 namespace ServiceDesk.Services;
 
 
@@ -14,7 +16,7 @@ public class TicketsService
         _context = context;
     }
 
-    public async Task<List<TicketListViewModel>> GetAllTickets(TicketStatus? status, TicketPriority? priority)
+    public async Task<List<TicketListViewModel>> GetAllTicketsAsync(TicketStatus? status, TicketPriority? priority)
     {
         var query = _context.Tickets.AsNoTracking();
 
@@ -43,19 +45,14 @@ public class TicketsService
         return tickets;
     }
 
-    public async Task<TicketFormViewModel> GetTicketFormViewModel()
+    public async Task<TicketFormViewModel> GetTicketFormViewModelAsync()
     {
-        var viemodel = new TicketFormViewModel
-        {
-
-            Priorities = Enum.GetValues<TicketPriority>().ToList(),
-            Categories = await _context.Categories.ToListAsync(),
-            Employees = await _context.Employees.ToListAsync()
-        };
-        return viemodel;
+        var viewModel = new TicketFormViewModel();
+        await FillOptionsAsync(viewModel);
+        return viewModel;
     }
 
-    internal async Task CreateTicket(TicketFormViewModel viewModel)
+    public async Task CreateTicketAsync(TicketFormViewModel viewModel)
     {
         _context.Tickets.Add(new Models.Ticket
         {
@@ -67,5 +64,57 @@ public class TicketsService
             CategoryId = viewModel.CategoryId!.Value,
         });
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<TicketFormViewModel?> GetTicketFormViewModelAsync(int id)
+    {
+        var ticket = await _context.Tickets.FindAsync(id);
+        if (ticket == null)
+        {
+            return null;
+        }
+        var viewModel = new TicketFormViewModel
+        {
+            Title = ticket.Title,
+            Description = ticket.Description,
+            Priority = ticket.Priority,
+            CategoryId = ticket.CategoryId,
+            EmployeeId = ticket.EmployeeId
+        };
+        await FillOptionsAsync(viewModel);
+        return viewModel;
+    }
+
+    public async Task<UpdateTicketResult> UpdateTicketAsync(int id, TicketFormViewModel viewModel)
+    {
+        var ticket = await _context.Tickets.FindAsync(id);
+
+        if (ticket == null)
+        {
+            return UpdateTicketResult.NotFound;
+        }
+        if (ticket.Status == TicketStatus.Abgeschlossen)
+        {
+            return UpdateTicketResult.TicketClosed;
+        }
+
+        ticket.Title = viewModel.Title;
+        ticket.Description = viewModel.Description;
+        ticket.Priority = viewModel.Priority!.Value;
+        ticket.CategoryId = viewModel.CategoryId!.Value;
+        if (viewModel.EmployeeId.HasValue && !ticket.EmployeeId.HasValue)
+        {
+            ticket.EditDate = DateTime.Now;
+            ticket.EmployeeId = viewModel.EmployeeId;
+        }
+        await _context.SaveChangesAsync();
+        return UpdateTicketResult.Success;
+    }
+
+    public async Task FillOptionsAsync(TicketFormViewModel viewModel)
+    {
+        viewModel.Priorities = Enum.GetValues<TicketPriority>().ToList();
+        viewModel.Categories = await _context.Categories.ToListAsync();
+        viewModel.Employees = await _context.Employees.ToListAsync();
     }
 }
