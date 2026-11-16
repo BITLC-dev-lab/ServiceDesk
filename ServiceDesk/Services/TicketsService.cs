@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using ServiceDesk.Data;
 using ServiceDesk.ViewModels;
 using ServiceDesk.Models.Enums;
+using Microsoft.AspNetCore.Http.HttpResults;
 namespace ServiceDesk.Services;
 
 
@@ -45,17 +47,12 @@ public class TicketsService
 
     public async Task<TicketFormViewModel> GetTicketFormViewModel()
     {
-        var viemodel = new TicketFormViewModel
-        {
-
-            Priorities = Enum.GetValues<TicketPriority>().ToList(),
-            Categories = await _context.Categories.ToListAsync(),
-            Employees = await _context.Employees.ToListAsync()
-        };
-        return viemodel;
+        var viewModel = new TicketFormViewModel();
+        FillOptions(viewModel);
+        return viewModel;
     }
 
-    internal async Task CreateTicket(TicketFormViewModel viewModel)
+    public async Task CreateTicket(TicketFormViewModel viewModel)
     {
         _context.Tickets.Add(new Models.Ticket
         {
@@ -67,5 +64,38 @@ public class TicketsService
             CategoryId = viewModel.CategoryId!.Value,
         });
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<UpdateTicketResult> UpdateTicket(int id, TicketFormViewModel viewModel)
+    {
+        var ticket = await _context.Tickets.FindAsync(id);
+
+        if (ticket == null)
+        {
+            return UpdateTicketResult.NotFound;
+        }
+        if (ticket.Status == TicketStatus.Abgeschlossen)
+        {
+            return UpdateTicketResult.TicketClosed;
+        }
+
+        ticket.Title = viewModel.Title;
+        ticket.Description = viewModel.Description;
+        ticket.Priority = viewModel.Priority!.Value;
+        ticket.CategoryId = viewModel.CategoryId!.Value;
+        if (viewModel.EmployeeId.HasValue && !ticket.EmployeeId.HasValue)
+        {
+            ticket.EditDate = DateTime.Now;
+            ticket.EmployeeId = viewModel.EmployeeId;
+        }
+        await _context.SaveChangesAsync();
+        return UpdateTicketResult.Success;
+    }
+
+    public void FillOptions(TicketFormViewModel viewModel)
+    {
+        viewModel.Priorities = Enum.GetValues<TicketPriority>().ToList();
+        viewModel.Categories = _context.Categories.ToList();
+        viewModel.Employees = _context.Employees.ToList();
     }
 }
