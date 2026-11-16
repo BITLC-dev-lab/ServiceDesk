@@ -16,7 +16,7 @@ public class TicketsService
         _context = context;
     }
 
-    public async Task<List<TicketListViewModel>> GetAllTickets(TicketStatus? status, TicketPriority? priority)
+    public async Task<List<TicketListViewModel>> GetAllTicketsAsync(TicketStatus? status, TicketPriority? priority)
     {
         var query = _context.Tickets.AsNoTracking();
 
@@ -45,14 +45,14 @@ public class TicketsService
         return tickets;
     }
 
-    public async Task<TicketFormViewModel> GetTicketFormViewModel()
+    public async Task<TicketFormViewModel> GetTicketFormViewModelAsync()
     {
         var viewModel = new TicketFormViewModel();
-        FillOptions(viewModel);
+        await FillOptionsAsync(viewModel);
         return viewModel;
     }
 
-    public async Task CreateTicket(TicketFormViewModel viewModel)
+    public async Task CreateTicketAsync(TicketFormViewModel viewModel)
     {
         _context.Tickets.Add(new Models.Ticket
         {
@@ -66,7 +66,26 @@ public class TicketsService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<UpdateTicketResult> UpdateTicket(int id, TicketFormViewModel viewModel)
+    public async Task<TicketFormViewModel?> GetTicketFormViewModelAsync(int id)
+    {
+        var ticket = await _context.Tickets.FindAsync(id);
+        if (ticket == null)
+        {
+            return null;
+        }
+        var viewModel = new TicketFormViewModel
+        {
+            Title = ticket.Title,
+            Description = ticket.Description,
+            Priority = ticket.Priority,
+            CategoryId = ticket.CategoryId,
+            EmployeeId = ticket.EmployeeId
+        };
+        await FillOptionsAsync(viewModel);
+        return viewModel;
+    }
+
+    public async Task<UpdateTicketResult> UpdateTicketAsync(int id, TicketFormViewModel viewModel)
     {
         var ticket = await _context.Tickets.FindAsync(id);
 
@@ -92,10 +111,10 @@ public class TicketsService
         return UpdateTicketResult.Success;
     }
 
-    public void FillOptions(TicketFormViewModel viewModel)
+    public async Task FillOptionsAsync(TicketFormViewModel viewModel)
     {
         viewModel.Priorities = Enum.GetValues<TicketPriority>().ToList();
-        viewModel.Categories = _context.Categories.ToList();
-        viewModel.Employees = _context.Employees.ToList();
+        viewModel.Categories = await _context.Categories.ToListAsync();
+        viewModel.Employees = await _context.Employees.ToListAsync();
     }
 }
