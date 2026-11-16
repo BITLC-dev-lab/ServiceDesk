@@ -1,0 +1,204 @@
+﻿@{
+  ViewData["Title"] = "Tickets";
+}
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <div>
+    <h1 class="h3 mb-1">Tickets</h1>
+    <p class="text-secondary small mb-0">Datensätze übersichtlich verwalten</p>
+  </div>
+  <a class="btn btn-primary" asp-controller="Tickets" asp-action="Create">+ Neues Ticket</a>
+</div>
+<div class="card sd-card">
+  <div class="card-body border-bottom">
+    <div class="row g-3 filter-row">
+      <div class="col-sm-6 col-md-auto">
+        <label for="status" class="form-label small mb-1">Status</label
+        ><select id="status" class="form-select form-select-sm">
+          <option>Alle</option>
+          <option>Offen</option>
+          <option>In Bearbeitung</option>
+          <option>Abgeschlossen</option>
+        </select>
+      </div>
+      <div class="col-sm-6 col-md-auto">
+        <label for="priority" class="form-label small mb-1">Priorität</label
+        ><select id="priority" class="form-select form-select-sm">
+          <option>Alle</option>
+          <option>Niedrig</option>
+          <option>Mittel</option>
+          <option>Hoch</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table sd-table align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Ticket-ID</th>
+          <th>Titel</th>
+          <th>Kategorie</th>
+          <th>Priorität</th>
+          <th>Status</th>
+          <th>Zuständiger Mitarbeiter</th>
+          <th>Erstellt am</th>
+          <th class="text-end">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fw-medium text-nowrap">T-1042</td>
+          <td class="title-cell">Drucker im Vertrieb druckt nicht</td>
+          <td>Hardware</td>
+          <td><span class="sd-badge badge-hoch">Hoch</span></td>
+          <td><span class="sd-badge badge-offen">Offen</span></td>
+          <td>Lena Hoffmann</td>
+          <td class="text-nowrap">18.06.2025</td>
+          <td>
+            <div class="action-links justify-content-end">
+              <a asp-controller="Tickets" asp-action="Edit">Bearbeiten</a>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+                data-label="T-1042"
+              >
+                Löschen
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="fw-medium text-nowrap">T-1041</td>
+          <td class="title-cell">VPN-Verbindung bricht regelmäßig ab</td>
+          <td>Netzwerk</td>
+          <td><span class="sd-badge badge-hoch">Hoch</span></td>
+          <td><span class="sd-badge badge-in-bearbeitung">In Bearbeitung</span></td>
+          <td>Jonas Becker</td>
+          <td class="text-nowrap">17.06.2025</td>
+          <td>
+            <div class="action-links justify-content-end">
+              <a asp-controller="Tickets" asp-action="Edit">Bearbeiten</a><button
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+                data-label="T-1041"
+              >
+                Löschen
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="fw-medium text-nowrap">T-1040</td>
+          <td class="title-cell">Office-Aktivierung fehlgeschlagen</td>
+          <td>Software</td>
+          <td><span class="sd-badge badge-mittel">Mittel</span></td>
+          <td><span class="sd-badge badge-in-bearbeitung">In Bearbeitung</span></td>
+          <td>Lena Hoffmann</td>
+          <td class="text-nowrap">17.06.2025</td>
+          <td>
+            <div class="action-links justify-content-end">
+              <a asp-controller="Tickets" asp-action="Edit">Bearbeiten</a>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+                data-label="T-1040"
+              >
+                Löschen
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="fw-medium text-nowrap">T-1039</td>
+          <td class="title-cell">Zugriff auf Projektordner fehlt</td>
+          <td>Berechtigungen</td>
+          <td><span class="sd-badge badge-mittel">Mittel</span></td>
+          <td><span class="sd-badge badge-offen">Offen</span></td>
+          <td>Nicht zugewiesen</td>
+          <td class="text-nowrap">16.06.2025</td>
+          <td>
+            <div class="action-links justify-content-end">
+              <a asp-controller="Tickets" asp-action="Edit">Bearbeiten</a>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+                data-label="T-1039"
+              >
+                Löschen
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="fw-medium text-nowrap">T-1038</td>
+          <td class="title-cell">Monitor zeigt kein Bild</td>
+          <td>Hardware</td>
+          <td><span class="sd-badge badge-niedrig">Niedrig</span></td>
+          <td><span class="sd-badge badge-abgeschlossen">Abgeschlossen</span></td>
+          <td>Mehmet Yilmaz</td>
+          <td class="text-nowrap">13.06.2025</td>
+          <td>
+            <div class="action-links justify-content-end">
+              <a asp-controller="Tickets" asp-action="Edit">Bearbeiten</a>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+                data-label="T-1038"
+              >
+                Löschen
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="deleteModal"
+  tabindex="-1"
+  aria-labelledby="deleteModalTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title fs-5" id="deleteModalTitle">Löschen bestätigen</h2>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Schließen"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-2">Möchten Sie diesen Eintrag wirklich löschen?</p>
+        <p class="small text-secondary mb-0" id="deleteLabel"></p>
+        <div class="alert alert-danger mt-3 mb-0 d-none" id="deleteError">
+          Dieser Eintrag kann nicht gelöscht werden, da er noch verwendet wird.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Abbrechen</button
+        ><button type="button" class="btn btn-danger" id="confirmDelete">Löschen</button>
+      </div>
+    </div>
+  </div>
+</div>
+      
+
+@section Scripts {
+  <script>
+    document.getElementById("deleteModal").addEventListener("show.bs.modal", function (event) {
+      const trigger = event.relatedTarget;
+      const blocked = trigger.dataset.blocked === "true";
+      document.getElementById("deleteLabel").textContent = trigger.dataset.label;
+      document.getElementById("deleteError").classList.toggle("d-none", !blocked);
+      document.getElementById("confirmDelete").disabled = blocked;
+    });
+        
+  </script>
+}
