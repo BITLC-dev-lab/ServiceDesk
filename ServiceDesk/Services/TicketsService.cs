@@ -111,10 +111,21 @@ public class TicketsService
         return UpdateTicketResult.Success;
     }
 
+    internal async Task DeleteTicketAsync(int id)
+    {
+        var ticket = await _context.Tickets.FindAsync(id);
+        if (ticket != null)
+        {
+            _context.Tickets.Remove(ticket);
+            await _context.SaveChangesAsync();
+        }
+    }
+
     public async Task FillOptionsAsync(TicketFormViewModel viewModel)
     {
         viewModel.Priorities = Enum.GetValues<TicketPriority>().ToList();
         viewModel.Categories = await _context.Categories.ToListAsync();
         viewModel.Employees = await _context.Employees.ToListAsync();
     }
+
 }
