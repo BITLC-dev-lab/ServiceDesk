@@ -16,7 +16,7 @@ public class TicketsService
         _context = context;
     }
 
-    public async Task<List<TicketListViewModel>> GetAllTicketsAsync(TicketStatus? status, TicketPriority? priority)
+    public async Task<TicketListViewModel> GetAllTicketsAsync(TicketStatus? status, TicketPriority? priority)
     {
         var query = _context.Tickets.AsNoTracking();
 
@@ -31,7 +31,7 @@ public class TicketsService
         }
 
         var tickets = await query
-            .Select(t => new TicketListViewModel
+            .Select(t => new TicketViewModel
             {
                 Id = t.Id,
                 Title = t.Title,
@@ -42,7 +42,14 @@ public class TicketsService
                 CreatedAt = t.CreatedAt
             })
             .ToListAsync();
-        return tickets;
+        var ticketListViewModel = new TicketListViewModel
+        {
+            Tickets = tickets,
+            Statuses = Enum.GetNames(typeof(TicketStatus)).ToList(),
+            Priorities = Enum.GetNames(typeof(TicketPriority)).ToList()
+        };
+
+        return ticketListViewModel;
     }
 
     public async Task<TicketFormViewModel> GetTicketFormViewModelAsync()

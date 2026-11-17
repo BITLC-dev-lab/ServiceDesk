@@ -2,12 +2,8 @@
 {
     public class TicketListViewModel
     {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string CategoryName { get; set; } = string.Empty;
-        public string Priority { get; set; } = string.Empty;
-        public string? Status { get; set; }
-        public string? EmployeeName { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public List<TicketViewModel> Tickets { get; set; } = new List<TicketViewModel>();
+        public List<string> Statuses { get; set; } = new List<string>();
+        public List<string> Priorities { get; set; } = new List<string>();
     }
 }
