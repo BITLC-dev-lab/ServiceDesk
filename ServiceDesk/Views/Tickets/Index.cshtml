@@ -1,0 +1,109 @@
+﻿@model ServiceDesk.ViewModels.TicketListViewModel
+@{
+	ViewData["Title"] = "Tickets";
+}
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+	<div>
+		<h1 class="h3 mb-1">Tickets</h1>
+		<p class="text-secondary small mb-0">Datensätze übersichtlich verwalten</p>
+	</div>
+	<a class="btn btn-primary" asp-controller="Tickets" asp-action="Create">+ Neues Ticket</a>
+
+</div>
+<div class="card sd-card">
+	<div class="card-body border-bottom">
+		<form asp-controller="Tickets" asp-action="Index" method="get">
+			<div class="row g-3 filter-row align-items-end">
+				<div class="col-sm-6 col-md-auto">
+					<label for="status" class="form-label small mb-1">
+						Status
+					</label>
+					<select id="status" name="status" class="form-select form-select-sm">
+						<option value="">Alle</option>
+
+						@foreach (var status in Model.Statuses)
+						{
+							<option value="@status">@status</option>
+						}
+					</select>
+				</div>
+				<div class="col-sm-6 col-md-auto">
+					<label for="priority" class="form-label small mb-1">
+						Priorität
+					</label>
+					<select id="priority" name="priority" class="form-select form-select-sm">
+						<option value="">Alle</option>
+
+						@foreach (var priority in Model.Priorities)
+						{
+							<option value="@priority">@priority</option>
+						}
+					</select>
+				</div>
+				<div class="col-sm-6 col-md-auto">
+					<button type="submit" class="btn btn-primary btn-sm">
+						Filtern
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="table-responsive">
+	<table class="table sd-table align-middle mb-0">
+		<thead>
+			<tr>
+				<th>Ticket-ID</th>
+				<th>Titel</th>
+				<th>Kategorie</th>
+				<th>Priorität</th>
+				<th>Status</th>
+				<th>Zuständiger Mitarbeiter</th>
+				<th>Erstellt am</th>
+				<th class="text-end">Aktionen</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			@foreach (var ticket in Model.Tickets)
+			{
+				<tr>
+					<td class="fw-medium text-nowrap">@ticket.Id</td>
+					<td class="title-cell">@ticket.Title</td>
+					<td>@ticket.CategoryName</td>
+					<td><span class="sd-badge badge-hoch">@ticket.Priority</span></td>
+					<td><span class="sd-badge badge-offen">@ticket.Status</span></td>
+					<td>@ticket.EmployeeName</td>
+					<td class="text-nowrap">@ticket.CreatedAt.ToString("dd.MM.yyyy")</td>
+					<td class="text-end">
+						<div class="action-links justify-content-end align-items-center">
+
+							<a asp-controller="Tickets"
+							   asp-action="Edit"
+							   asp-route-id="@ticket.Id">
+								Bearbeiten
+							</a>
+
+							<form asp-controller="Tickets"
+								  asp-action="Delete"
+								  asp-route-id="@ticket.Id"
+								  method="post"
+								  class="m-0"
+								  onsubmit="return confirm('Möchten Sie dieses Ticket wirklich löschen?');">
+
+								<button type="submit">
+									Löschen
+								</button>
+
+							</form>
+
+						</div>
+					</td>
+				</tr>
+			}
+
+		</tbody>
+	</table>
+</div>
