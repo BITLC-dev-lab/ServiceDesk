@@ -7,53 +7,57 @@
 	<a class="back-link d-inline-block mb-3" asp-controller="Tickets" asp-action="Index">← Zurück zu Tickets</a>
 	<h1 class="h3 mb-1">Neues Ticket</h1>
 	<p class="text-secondary mb-4">Erfassen Sie ein neues IT-Support-Ticket.</p>
-	<form class="card sd-card" method="post" novalidate>
+	<form class="card sd-card" asp-controller="Tickets" asp-action="Create" method="post">
 		<div class="card-body p-4">
 			<div class="mb-3">
-				<label class="form-label fw-medium" for="title">
-					Titel <span class="text-danger">*</span>
+				<label class="form-label fw-medium" for="Title">
+					Title <span class="text-danger">*</span>
 				</label>
-				<input class="form-control is-invalid" id="title" name="Titel" required />
-				<div class="invalid-feedback">Bitte geben Sie einen Titel ein.</div>
+				<input asp-for="Title" class="form-control"/>
+				<span asp-validation-for="Title" class="text-danger"></span>
 			</div>
 			<div class="mb-3">
-				<label class="form-label fw-medium" for="description">
+				<label class="form-label fw-medium" for="Description">
 					Beschreibung <span class="text-danger">*</span>
 				</label>
-				<textarea class="form-control is-invalid" id="description" name="Beschreibung" rows="5" required>
-        </textarea>
-				<div class="invalid-feedback">Bitte geben Sie eine Beschreibung ein.</div>
+				<textarea asp-for="Description" class="form-control" rows="5"></textarea>
+				<span asp-validation-for="Description" class="text-danger"></span>
 			</div>
 			<div class="row g-3">
 				<div class="col-md-6 mb-3">
-					<label class="form-label fw-medium" for="category">Kategorie<span class="text-danger">*</span></label>
-					<select class="form-select is-invalid" id="category" name="KategorieId" required>
+					<label class="form-label fw-medium" for="CategoryId">Kategorie<span class="text-danger">*</span></label>
+					<select class="form-select" asp-for="CategoryId">
 						<option value="">Bitte auswählen</option>
-						<option>Hardware</option>
-						<option>Software</option>
-						<option>Netzwerk</option>
-						<option>Berechtigungen</option>
+						@foreach (var category in Model.Categories)
+						{
+							<option value="@category.Id">@category.Name</option>
+						}
 					</select>
-					<div class="invalid-feedback">Bitte wählen Sie eine Kategorie aus.</div>
+					<span asp-validation-for="CategoryId" class="text-danger"></span>
 				</div>
 				<div class="col-md-6 mb-3">
-					<label class="form-label fw-medium" for="priority">
+					<label class="form-label fw-medium" for="Priority">
 						Priorität <span class="text-danger">*</span>
 					</label>
-					<select class="form-select" id="priority" name="Prioritaet" required>
-						<option>Niedrig</option>
-						<option selected>Mittel</option>
-						<option>Hoch</option>
+					<select class="form-select" asp-for="Priority">
+					<option value="">Bitte auswählen</option>
+						@foreach (var priority in Model.Priorities)
+						{
+							<option value="@priority">@priority</option>
+						}
 					</select>
+					<span asp-validation-for="Priority" class="text-danger"></span>
 				</div>
 			</div>
 			<div class="mb-3">
-				<label class="form-label fw-medium" for="employee">Zuständiger Mitarbeiter</label>
-				<select class="form-select" id="employee" name="MitarbeiterId">
+				<label class="form-label fw-medium" for="EmployeeId">Zuständiger Mitarbeiter</label>
+				<select class="form-select" asp-for="EmployeeId">
 					<option value="">Nicht zugewiesen</option>
-					<option>Lena Hoffmann</option>
-					<option>Jonas Becker</option>
-					<option>Mehmet Yilmaz</option>
+					@foreach (var employee in Model.Employees)
+					{
+						<option value="@employee.Id">@($"{employee.LastName} {employee.FirstName}")</option>
+					}
+					
 				</select>
 			</div>
 		</div>
