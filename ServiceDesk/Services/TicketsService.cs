@@ -69,6 +69,7 @@ public class TicketsService
             Priority = viewModel.Priority!.Value,
             CreatedAt = DateTime.Now,
             CategoryId = viewModel.CategoryId!.Value,
+            EmployeeId = viewModel.EmployeeId
         });
         await _context.SaveChangesAsync();
     }
@@ -134,5 +135,4 @@ public class TicketsService
         viewModel.Categories = await _context.Categories.ToListAsync();
         viewModel.Employees = await _context.Employees.ToListAsync();
     }
-
 }
