@@ -52,7 +52,7 @@ namespace ServiceDesk.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, TicketFormViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, TicketEditViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -69,13 +69,27 @@ namespace ServiceDesk.Controllers
                 case
                     UpdateTicketResult.NotFound:
                     return NotFound();
-                case UpdateTicketResult.TicketClosed:
+                case UpdateTicketResult.InvalideStatus:
                     ModelState.AddModelError(string.Empty, "Cannot edit a closed ticket.");
                     await _ticketsService.FillOptionsAsync(viewModel);
                     return View(viewModel);
                 default:
                     return StatusCode(500, "An unexpected error occurred.");
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reopen(int Id)
+        {
+            var result = await _ticketsService.ReopenTicketAsync(Id);
+            return result switch
+            {
+                UpdateTicketResult.Success => RedirectToAction("Edit", new { id = Id }),
+                UpdateTicketResult.NotFound => NotFound(),
+                UpdateTicketResult.InvalideStatus => BadRequest("Cannot reopen a ticket that is not closed."),
+                _ => StatusCode(500, "An unexpected error occurred."),
+            };
         }
 
         [HttpPost]

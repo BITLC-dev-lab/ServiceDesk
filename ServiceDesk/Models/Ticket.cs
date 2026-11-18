@@ -14,7 +14,7 @@ namespace ServiceDesk.Models
         public string Description { get; set; } = string.Empty;
         public TicketStatus Status { get; set; } = TicketStatus.Offen;
         [Required(ErrorMessage = "Die Priorität ist erforderlich.")]
-        public TicketPriority Priority { get; set; } = TicketPriority.Niedrig;
+        public TicketPriority Priority { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? EditDate { get; set; }
         public DateTime? CompleteDate { get; set; }

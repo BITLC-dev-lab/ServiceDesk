@@ -10,14 +10,14 @@
 	<form class="card sd-card" asp-controller="Tickets" asp-action="Create" method="post">
 		<div class="card-body p-4">
 			<div class="mb-3">
-				<label class="form-label fw-medium" for="Title">
+				<label class="form-label fw-medium" asp-for="Title">
 					Title <span class="text-danger">*</span>
 				</label>
 				<input asp-for="Title" class="form-control"/>
 				<span asp-validation-for="Title" class="text-danger"></span>
 			</div>
 			<div class="mb-3">
-				<label class="form-label fw-medium" for="Description">
+				<label class="form-label fw-medium" asp-for="Description">
 					Beschreibung <span class="text-danger">*</span>
 				</label>
 				<textarea asp-for="Description" class="form-control" rows="5"></textarea>
@@ -25,7 +25,7 @@
 			</div>
 			<div class="row g-3">
 				<div class="col-md-6 mb-3">
-					<label class="form-label fw-medium" for="CategoryId">Kategorie<span class="text-danger">*</span></label>
+					<label class="form-label fw-medium" asp-for="CategoryId">Kategorie<span class="text-danger">*</span></label>
 					<select class="form-select" asp-for="CategoryId">
 						<option value="">Bitte auswählen</option>
 						@foreach (var category in Model.Categories)
@@ -36,7 +36,7 @@
 					<span asp-validation-for="CategoryId" class="text-danger"></span>
 				</div>
 				<div class="col-md-6 mb-3">
-					<label class="form-label fw-medium" for="Priority">
+					<label class="form-label fw-medium" asp-for="Priority">
 						Priorität <span class="text-danger">*</span>
 					</label>
 					<select class="form-select" asp-for="Priority">

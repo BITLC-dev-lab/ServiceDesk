@@ -1,0 +1,111 @@
+﻿@using ServiceDesk.Models.Enums
+@model ServiceDesk.ViewModels.TicketEditViewModel
+@{
+	ViewData["Title"] = "Ticket bearbeiten";
+	var ticketId = ViewContext.RouteData.Values["id"];
+	bool isClosed = Model.Status == TicketStatus.Abgeschlossen;
+}
+
+<div class="form-page">
+	<a class="back-link d-inline-block mb-3" asp-controller="Tickets" asp-action="Index">← Zurück zu Tickets</a>
+	<h1 class="h3 mb-1">Ticket bearbeiten</h1>
+	<p class="text-secondary mb-4">Ticketdaten prüfen und aktualisieren.</p>
+	@if (isClosed)
+	{
+		<div class="alert alert-warning d-flex align-items-center justify-content-between">
+			<span>
+				Dieses Ticket ist abgeschlossen und kann nicht bearbeitet werden.
+			</span>
+			<form asp-controller="Tickets" asp-action="Reopen" asp-route-id="@ticketId" method="post">
+				<button type="submit" class="btn btn-sm btn-outline-dark">
+					Ticket erneut öffnen
+				</button>
+			</form>
+		</div>
+	}
+	<form class="card sd-card" asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticketId" method="post">
+		<div class="card-body p-4">
+			<div class="row g-3 mb-3">
+				<div class="col-sm-6">
+					<div class="form-label fw-medium">Ticket-ID</div>
+					<div class="form-control bg-light">T-@ticketId</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-label fw-medium">Erstellungsdatum</div>
+					<div class="form-control bg-light">
+						@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+					</div>
+				</div>
+			</div>
+			<fieldset disabled="@isClosed">
+				<div class="mb-3">
+					<label class="form-label fw-medium" asp-for="Title">Titel <span class="text-danger">*</span></label>
+					<input class="form-control"
+						   id="title"
+						   name="Title"
+						   value="@Model.Title"
+						   required />
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium" asp-for="Description">Beschreibung <span class="text-danger">*</span></label>
+					<textarea class="form-control"
+							  id="description"
+							  name="Description"
+							  rows="5"
+							  required>@Model.Description</textarea>
+				</div>
+				<div class="row g-3">
+					<div class="col-md-6 mb-3">
+						<label class="form-label fw-medium" asp-for="CategoryId">Kategorie<span class="text-danger">*</span></label>
+						<select class="form-select" asp-for="CategoryId">
+							@foreach (var category in Model.Categories)
+							{
+
+								<option value="@category.Id">@category.Name</option>
+							}
+						</select>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label class="form-label fw-medium" asp-for="Priority">Priorität <span class="text-danger">*</span></label>
+						<select class="form-select" asp-for="Priority">
+							@foreach (var priority in Model.Priorities)
+							{
+
+								<option value="@priority">@priority</option>
+							}
+						</select>
+					</div>
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium" asp-for="EmployeeId">Zuständiger Mitarbeiter</label>
+					<select class="form-select" asp-for="EmployeeId">
+						<option>Nicht zugewiesen</option>
+						@foreach (var employee in Model.Employees)
+						{
+							<option value="@employee.Id"> @($"{employee.FirstName} {employee.LastName}")</option>
+						}
+					</select>
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium" asp-for="Status">Status</label>
+					<select class="form-select" asp-for="Status">
+						<option value="Offen">Offen</option>
+						<option value="InBearbeitung">In Bearbeitung</option>
+						<option value="Abgeschlossen">Abgeschlossen</option>
+					</select>
+				</div>
+			</fieldset>
+		</div>
+		@if (!isClosed)
+		{
+			<div class="card-footer bg-white d-flex justify-content-end gap-2 p-3">
+				<a class="btn btn-outline-secondary" asp-controller="Tickets" asp-action="Index">Abbrechen</a>
+				<button class="btn btn-primary" type="submit">
+					Änderungen speichern
+				</button>
+			</div>
+		}
+	</form>
+</div>
+
+      

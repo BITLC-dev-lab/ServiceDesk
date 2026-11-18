@@ -36,11 +36,12 @@ public class TicketsService
                 Id = t.Id,
                 Title = t.Title,
                 CategoryName = t.Category.Name,
-                Priority = t.Priority.ToString(),
-                Status = t.Status.ToString(),
+                Priority = t.Priority,
+                Status = t.Status,
                 EmployeeName = t.Employee != null ? t.Employee.FirstName + " " + t.Employee.LastName : string.Empty,
                 CreatedAt = t.CreatedAt
             })
+            .OrderByDescending(t => t.CreatedAt)
             .ToListAsync();
         var ticketListViewModel = new TicketListViewModel
         {
@@ -81,19 +82,21 @@ public class TicketsService
         {
             return null;
         }
-        var viewModel = new TicketFormViewModel
+        var viewModel = new TicketEditViewModel
         {
             Title = ticket.Title,
             Description = ticket.Description,
             Priority = ticket.Priority,
             CategoryId = ticket.CategoryId,
-            EmployeeId = ticket.EmployeeId
+            EmployeeId = ticket.EmployeeId,
+            Status = ticket.Status,
+            CreatedAt = ticket.CreatedAt
         };
         await FillOptionsAsync(viewModel);
         return viewModel;
     }
 
-    public async Task<UpdateTicketResult> UpdateTicketAsync(int id, TicketFormViewModel viewModel)
+    public async Task<UpdateTicketResult> UpdateTicketAsync(int id, TicketEditViewModel viewModel)
     {
         var ticket = await _context.Tickets.FindAsync(id);
 
@@ -103,13 +106,14 @@ public class TicketsService
         }
         if (ticket.Status == TicketStatus.Abgeschlossen)
         {
-            return UpdateTicketResult.TicketClosed;
+            return UpdateTicketResult.InvalideStatus;
         }
 
         ticket.Title = viewModel.Title;
         ticket.Description = viewModel.Description;
         ticket.Priority = viewModel.Priority!.Value;
         ticket.CategoryId = viewModel.CategoryId!.Value;
+        ticket.Status = viewModel.Status;
         if (viewModel.EmployeeId.HasValue && !ticket.EmployeeId.HasValue)
         {
             ticket.EditDate = DateTime.Now;
@@ -129,10 +133,28 @@ public class TicketsService
         }
     }
 
+    internal async Task<UpdateTicketResult> ReopenTicketAsync(int id)
+    {
+        var ticket = await _context.Tickets.FindAsync(id);
+        if (ticket == null)
+        {
+            return UpdateTicketResult.NotFound;
+        }
+        if (ticket.Status != TicketStatus.Abgeschlossen)
+        {
+            return UpdateTicketResult.InvalideStatus;
+        }
+        ticket.Status = TicketStatus.Offen;
+        ticket.CreatedAt = DateTime.Now;
+        await _context.SaveChangesAsync();
+        return UpdateTicketResult.Success;
+    }
+
     public async Task FillOptionsAsync(TicketFormViewModel viewModel)
     {
         viewModel.Priorities = Enum.GetValues<TicketPriority>().ToList();
         viewModel.Categories = await _context.Categories.ToListAsync();
         viewModel.Employees = await _context.Employees.ToListAsync();
     }
+
 }
