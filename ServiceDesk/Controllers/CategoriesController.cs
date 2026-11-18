@@ -65,7 +65,6 @@ namespace ServiceDesk.Controllers
             }
 
             category.Name = updatedCategory.Name;
-            category.Description = updatedCategory.Description;
 
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
