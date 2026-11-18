@@ -8,7 +8,5 @@ namespace ServiceDesk.Models
         [Required(ErrorMessage = "Name ist erforderlich")]
         [StringLength(50, ErrorMessage = "Maximal 50 Zeichen")]
         public string Name { get; set; } = string.Empty;
-        [StringLength(200)]
-        public string? Description { get; set; }
     }
 }
