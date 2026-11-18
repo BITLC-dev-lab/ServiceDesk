@@ -440,6 +440,7 @@ main {
     font-weight: 650;
 }
 
+
 @media (max-width: 700px) {
     .header-row {
         min-height: auto;
@@ -484,3 +485,15 @@ main {
         flex-direction: column;
     }
 }
+
+.ticket-table-scroll {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+    .ticket-table-scroll thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: white;
+    }
