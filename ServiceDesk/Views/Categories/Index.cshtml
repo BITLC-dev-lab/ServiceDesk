@@ -1,94 +1,122 @@
 ﻿@model List<ServiceDesk.Models.Category>
 
 @{
-  ViewData["Title"] = "Kategorien";
+    ViewData["Title"] = "Kategorien";
 }
 
 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-  <div>
-    <h1 class="h3 mb-1">Kategorien</h1>
-    <p class="text-secondary small mb-0">Datensätze übersichtlich verwalten</p>
-  </div>
-  <a class="btn btn-primary" asp-controller="Categories" asp-action="Create">+ Neue Kategorie</a>
+    <div>
+        <h1 class="h3 mb-1">Kategorien</h1>
+        <p class="text-secondary small mb-0">Datensätze übersichtlich verwalten</p>
+    </div>
+
+    @* Create button*@
+    <a class="btn btn-primary" asp-controller="Categories" asp-action="Create">
+        + Neue Kategorie
+    </a>
 </div>
+
 <div class="card sd-card">
-  <div class="table-responsive">
-    <table class="table sd-table align-middle mb-0">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Kategoriename</th>
-          <th class="text-end">Aktionen</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach (var category in Model)
+    <div class="table-responsive">
+        <table class="table sd-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Kategoriename</th>
+                    <th class="text-end">Aktionen</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var category in Model)
                 {
+
                     <tr>
                         <td class="fw-medium">@category.Id</td>
                         <td>@category.Name</td>
                         <td>
                             <div class="action-links justify-content-end">
-                                <a asp-controller="Categories" asp-action="Edit">Bearbeiten</a>
-                                <button
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteModal"
-                                data-label="@category.Name"
-                                data-blocked="@category.ToString()">
+
+                                @* Edit*@
+
+                                <a asp-controller="Categories"
+                                   asp-action="Edit"
+                                   asp-route-id="@category.Id">
+                                    Bearbeiten
+                                </a>
+
+                                @* Delete*@
+
+                                <button type="button"
+                                        class="btn btn-link text-danger p-0 border-0"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal-@category.Id">
                                     Löschen
                                 </button>
+
                             </div>
                         </td>
                     </tr>
-                }
-      </tbody>
-    </table>
-  </div>
-</div>
-<div
-  class="modal fade"
-  id="deleteModal"
-  tabindex="-1"
-  aria-labelledby="deleteModalTitle"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title fs-5" id="deleteModalTitle">Löschen bestätigen</h2>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Schließen"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <p class="mb-2">Möchten Sie diesen Eintrag wirklich löschen?</p>
-        <p class="small text-secondary mb-0" id="deleteLabel"></p>
-        <div class="alert alert-danger mt-3 mb-0 d-none" id="deleteError">
-          Dieser Eintrag kann nicht gelöscht werden, da er noch verwendet wird.
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-          Abbrechen</button
-        ><button type="button" class="btn btn-danger" id="confirmDelete">Löschen</button>
-      </div>
-    </div>
-  </div>
-</div>
-      
 
-@section Scripts {
-  <script>
-    document.getElementById("deleteModal").addEventListener("show.bs.modal", function (event) {
-      const trigger = event.relatedTarget;
-      const blocked = trigger.dataset.blocked === "true";
-      document.getElementById("deleteLabel").textContent = trigger.dataset.label;
-      document.getElementById("deleteError").classList.toggle("d-none", !blocked);
-      document.getElementById("confirmDelete").disabled = blocked;
-    });
-        
-  </script>
-}
+                    @* Modal for deletion *@
+                    <div class="modal fade"
+                         id="deleteModal-@category.Id"
+                         tabindex="-1"
+                         aria-labelledby="deleteModalTitle-@category.Id"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+
+                                @* Form for deletion*@
+
+                                <form asp-action="Delete"
+                                      asp-route-id="@category.Id"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <div class="modal-header">
+                                        <h2 class="modal-title fs-5"
+                                            id="deleteModalTitle-@category.Id">
+                                            Löschen bestätigen
+                                        </h2>
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Schließen">
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <p class="mb-2">
+                                            Möchten Sie diesen Eintrag wirklich löschen?
+                                        </p>
+
+                                        @* Category name *@
+                                        <p class="small text-secondary mb-0">
+                                            <strong>@category.Name</strong>
+                                        </p>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button"
+                                                class="btn btn-outline-secondary"
+                                                data-bs-dismiss="modal">
+                                            Abbrechen
+                                        </button>
+
+                                        @* sending form *@
+                                        <button type="submit" class="btn btn-danger">
+                                            Löschen
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
