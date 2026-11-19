@@ -14,7 +14,6 @@
         Kategorie bearbeiten
     </h1>
     <p class="text-secondary mb-4">Kategorienamen aktualisieren.</p>
-
     <form class="card sd-card"
           asp-action="Edit"
           method="post">
@@ -27,10 +26,7 @@
                     Kategoriename
                     <span class="text-danger">*</span>
                 </label>
-                <input class="form-control"
-                       id="name"
-                       name="Name"
-                       value="" required />
+                <input asp-for="Name" class="form-control" />
                 <div class="invalid-feedback">
                     Bitte geben Sie einen Namen ein.
                 </div>
