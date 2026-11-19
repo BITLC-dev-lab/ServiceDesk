@@ -35,8 +35,16 @@ namespace ServiceDesk.Controllers
                 await _ticketsService.FillOptionsAsync(viewModel);
                 return View(viewModel);
             }
-            await _ticketsService.CreateTicketAsync(viewModel);
-            return RedirectToAction("Index");
+            var result = await _ticketsService.CreateTicketAsync(viewModel);
+            if (result == UpdateTicketResult.InvalidData)
+            {
+                ModelState.AddModelError(string.Empty, "Bitte wählen Sie eine gültige Kategorie, Priorität und Zuständigkeit aus.");
+                await _ticketsService.FillOptionsAsync(viewModel);
+                return View(viewModel);
+            }
+            return result == UpdateTicketResult.Success
+                ? RedirectToAction("Index")
+                : StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten.");
         }
 
         [HttpGet]
@@ -70,11 +78,15 @@ namespace ServiceDesk.Controllers
                     UpdateTicketResult.NotFound:
                     return NotFound();
                 case UpdateTicketResult.InvalideStatus:
-                    ModelState.AddModelError(string.Empty, "Cannot edit a closed ticket.");
+                    ModelState.AddModelError(string.Empty, "Abgeschlossene Tickets können nicht bearbeitet werden.");
+                    await _ticketsService.FillOptionsAsync(viewModel);
+                    return View(viewModel);
+                case UpdateTicketResult.InvalidData:
+                    ModelState.AddModelError(string.Empty, "Bitte wählen Sie eine gültige Kategorie, Priorität, Zuständigkeit und einen gültigen Status aus.");
                     await _ticketsService.FillOptionsAsync(viewModel);
                     return View(viewModel);
                 default:
-                    return StatusCode(500, "An unexpected error occurred.");
+                    return StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten.");
             }
         }
 
@@ -88,7 +100,7 @@ namespace ServiceDesk.Controllers
                 UpdateTicketResult.Success => RedirectToAction("Edit", new { id = Id }),
                 UpdateTicketResult.NotFound => NotFound(),
                 UpdateTicketResult.InvalideStatus => BadRequest("Cannot reopen a ticket that is not closed."),
-                _ => StatusCode(500, "An unexpected error occurred."),
+                _ => StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten."),
             };
         }
 
@@ -96,8 +108,13 @@ namespace ServiceDesk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _ticketsService.DeleteTicketAsync(id);
-            return RedirectToAction("Index");
+            var result = await _ticketsService.DeleteTicketAsync(id);
+            return result switch
+            {
+                UpdateTicketResult.Success => RedirectToAction("Index"),
+                UpdateTicketResult.NotFound => NotFound(),
+                _ => StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten."),
+            };
         }
     }
 }

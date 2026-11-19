@@ -25,6 +25,7 @@
 	}
 	<form class="card sd-card" asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticketId" method="post">
 		<div class="card-body p-4">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<div class="row g-3 mb-3">
 				<div class="col-sm-6">
 					<div class="form-label fw-medium">Ticket-ID</div>
@@ -79,7 +80,7 @@
 				<div class="mb-3">
 					<label class="form-label fw-medium" asp-for="EmployeeId">Zuständiger Mitarbeiter</label>
 					<select class="form-select" asp-for="EmployeeId">
-						<option>Nicht zugewiesen</option>
+						<option value="">Nicht zugewiesen</option>
 						@foreach (var employee in Model.Employees)
 						{
 							<option value="@employee.Id"> @($"{employee.FirstName} {employee.LastName}")</option>
@@ -93,6 +94,7 @@
 						<option value="InBearbeitung">In Bearbeitung</option>
 						<option value="Abgeschlossen">Abgeschlossen</option>
 					</select>
+					<span asp-validation-for="Status" class="text-danger"></span>
 				</div>
 			</fieldset>
 		</div>

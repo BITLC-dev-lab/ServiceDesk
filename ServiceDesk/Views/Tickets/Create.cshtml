@@ -9,6 +9,7 @@
 	<p class="text-secondary mb-4">Erfassen Sie ein neues IT-Support-Ticket.</p>
 	<form class="card sd-card" asp-controller="Tickets" asp-action="Create" method="post">
 		<div class="card-body p-4">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<div class="mb-3">
 				<label class="form-label fw-medium" asp-for="Title">
 					Title <span class="text-danger">*</span>

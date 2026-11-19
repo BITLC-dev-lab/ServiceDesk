@@ -60,8 +60,13 @@ public class TicketsService
         return viewModel;
     }
 
-    public async Task CreateTicketAsync(TicketFormViewModel viewModel)
+    public async Task<UpdateTicketResult> CreateTicketAsync(TicketFormViewModel viewModel)
     {
+        if (!await HasValidFormValuesAsync(viewModel))
+        {
+            return UpdateTicketResult.InvalidData;
+        }
+
         _context.Tickets.Add(new Models.Ticket
         {
             Title = viewModel.Title,
@@ -73,6 +78,7 @@ public class TicketsService
             EmployeeId = viewModel.EmployeeId
         });
         await _context.SaveChangesAsync();
+        return UpdateTicketResult.Success;
     }
 
     public async Task<TicketFormViewModel?> GetTicketFormViewModelAsync(int id)
@@ -104,6 +110,12 @@ public class TicketsService
         {
             return UpdateTicketResult.NotFound;
         }
+        if (!await HasValidFormValuesAsync(viewModel)
+            || !viewModel.Status.HasValue
+            || !Enum.IsDefined(viewModel.Status.Value))
+        {
+            return UpdateTicketResult.InvalidData;
+        }
         if (ticket.Status == TicketStatus.Abgeschlossen)
         {
             return UpdateTicketResult.InvalideStatus;
@@ -113,24 +125,28 @@ public class TicketsService
         ticket.Description = viewModel.Description;
         ticket.Priority = viewModel.Priority!.Value;
         ticket.CategoryId = viewModel.CategoryId!.Value;
-        ticket.Status = viewModel.Status;
-        if (viewModel.EmployeeId.HasValue && !ticket.EmployeeId.HasValue)
+        if (ticket.Status != viewModel.Status.Value)
         {
-            ticket.EditDate = DateTime.Now;
-            ticket.EmployeeId = viewModel.EmployeeId;
+            ticket.Status = viewModel.Status.Value;
+            ticket.CompleteDate = viewModel.Status.Value == TicketStatus.Abgeschlossen ? DateTime.Now : null;
         }
+        ticket.EmployeeId = viewModel.EmployeeId;
+        ticket.EditDate = DateTime.Now;
         await _context.SaveChangesAsync();
         return UpdateTicketResult.Success;
     }
 
-    internal async Task DeleteTicketAsync(int id)
+    internal async Task<UpdateTicketResult> DeleteTicketAsync(int id)
     {
         var ticket = await _context.Tickets.FindAsync(id);
-        if (ticket != null)
+        if (ticket == null)
         {
-            _context.Tickets.Remove(ticket);
-            await _context.SaveChangesAsync();
+            return UpdateTicketResult.NotFound;
         }
+
+        _context.Tickets.Remove(ticket);
+        await _context.SaveChangesAsync();
+        return UpdateTicketResult.Success;
     }
 
     internal async Task<UpdateTicketResult> ReopenTicketAsync(int id)
@@ -145,7 +161,8 @@ public class TicketsService
             return UpdateTicketResult.InvalideStatus;
         }
         ticket.Status = TicketStatus.Offen;
-        ticket.CreatedAt = DateTime.Now;
+        ticket.CompleteDate = null;
+        ticket.EditDate = DateTime.Now;
         await _context.SaveChangesAsync();
         return UpdateTicketResult.Success;
     }
@@ -155,6 +172,20 @@ public class TicketsService
         viewModel.Priorities = Enum.GetValues<TicketPriority>().ToList();
         viewModel.Categories = await _context.Categories.ToListAsync();
         viewModel.Employees = await _context.Employees.ToListAsync();
+    }
+
+    private async Task<bool> HasValidFormValuesAsync(TicketFormViewModel viewModel)
+    {
+        if (!viewModel.CategoryId.HasValue
+            || !await _context.Categories.AnyAsync(category => category.Id == viewModel.CategoryId.Value)
+            || !viewModel.Priority.HasValue
+            || !Enum.IsDefined(viewModel.Priority.Value))
+        {
+            return false;
+        }
+
+        return !viewModel.EmployeeId.HasValue
+            || await _context.Employees.AnyAsync(employee => employee.Id == viewModel.EmployeeId.Value);
     }
 
 }
