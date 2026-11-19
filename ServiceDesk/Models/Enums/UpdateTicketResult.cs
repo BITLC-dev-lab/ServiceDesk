@@ -4,6 +4,7 @@
     {
         Success,
         NotFound,
-        InvalideStatus
+        InvalideStatus,
+        InvalidData
     }
 }

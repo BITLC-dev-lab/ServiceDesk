@@ -1,10 +1,12 @@
-﻿using ServiceDesk.Models.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using ServiceDesk.Models.Enums;
 
 namespace ServiceDesk.ViewModels
 {
     public class TicketEditViewModel : TicketFormViewModel
     {
-        public TicketStatus Status { get; set; }
+        [Required(ErrorMessage = "Der Status ist erforderlich.")]
+        public TicketStatus? Status { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }
