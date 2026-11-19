@@ -12,15 +12,16 @@
     </a>
     <h1 class="h3 mb-1">Neue Kategorie</h1>
     <p class="text-secondary mb-4">Neue Ticketkategorie erfassen.</p>
-    <form class="card sd-card" method="post">
+    <form class="card sd-card" asp-controller="Categories" asp-action="Create" method="post">
         <div class="card-body p-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <div class="mb-3">
-                <label class="form-label fw-medium" for="name">
+                <label class="form-label fw-medium" asp-for="Name">
                     Kategoriename
                     <span class="text-danger">*</span>
                 </label>
-                <input class="form-control" id="name" name="Name" value="" required />
-                <div class="invalid-feedback">Bitte geben Sie einen Namen ein.</div>
+                <input class="form-control" asp-for="Name" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
         </div>
         <div class="card-footer bg-white d-flex justify-content-end gap-2 p-3">
@@ -28,7 +29,8 @@
                asp-controller="Categories"
                asp-action="Index">
                 Abbrechen
-            </a><button class="btn btn-primary" type="submit">Speichern</button>
+            </a>
+            <button class="btn btn-primary" type="submit">Speichern</button>
         </div>
     </form>
 </div>
