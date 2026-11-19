@@ -41,19 +41,13 @@
 			<fieldset disabled="@isClosed">
 				<div class="mb-3">
 					<label class="form-label fw-medium" asp-for="Title">Titel <span class="text-danger">*</span></label>
-					<input class="form-control"
-						   id="title"
-						   name="Title"
-						   value="@Model.Title"
-						   required />
+					<input asp-for="Title" class="form-control" />
+					<span asp-validation-for="Title" class="text-danger"></span>
 				</div>
 				<div class="mb-3">
 					<label class="form-label fw-medium" asp-for="Description">Beschreibung <span class="text-danger">*</span></label>
-					<textarea class="form-control"
-							  id="description"
-							  name="Description"
-							  rows="5"
-							  required>@Model.Description</textarea>
+					<textarea asp-for="Description" class="form-control" rows="5"></textarea>
+					<span asp-validation-for="Description" class="text-danger"></span>
 				</div>
 				<div class="row g-3">
 					<div class="col-md-6 mb-3">
@@ -65,6 +59,7 @@
 								<option value="@category.Id">@category.Name</option>
 							}
 						</select>
+						<span asp-validation-for="CategoryId" class="text-danger"></span>
 					</div>
 					<div class="col-md-6 mb-3">
 						<label class="form-label fw-medium" asp-for="Priority">Priorität <span class="text-danger">*</span></label>
@@ -75,6 +70,7 @@
 								<option value="@priority">@priority</option>
 							}
 						</select>
+						<span asp-validation-for="Priority" class="text-danger"></span>
 					</div>
 				</div>
 				<div class="mb-3">

@@ -64,7 +64,10 @@ namespace ServiceDesk.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await _ticketsService.FillOptionsAsync(viewModel);
+                if (!await PrepareEditViewModelAsync(id, viewModel))
+                {
+                    return NotFound();
+                }
                 return View(viewModel);
             }
 
@@ -79,11 +82,17 @@ namespace ServiceDesk.Controllers
                     return NotFound();
                 case UpdateTicketResult.InvalideStatus:
                     ModelState.AddModelError(string.Empty, "Abgeschlossene Tickets können nicht bearbeitet werden.");
-                    await _ticketsService.FillOptionsAsync(viewModel);
+                    if (!await PrepareEditViewModelAsync(id, viewModel))
+                    {
+                        return NotFound();
+                    }
                     return View(viewModel);
                 case UpdateTicketResult.InvalidData:
                     ModelState.AddModelError(string.Empty, "Bitte wählen Sie eine gültige Kategorie, Priorität, Zuständigkeit und einen gültigen Status aus.");
-                    await _ticketsService.FillOptionsAsync(viewModel);
+                    if (!await PrepareEditViewModelAsync(id, viewModel))
+                    {
+                        return NotFound();
+                    }
                     return View(viewModel);
                 default:
                     return StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten.");
@@ -102,6 +111,19 @@ namespace ServiceDesk.Controllers
                 UpdateTicketResult.InvalideStatus => BadRequest("Cannot reopen a ticket that is not closed."),
                 _ => StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten."),
             };
+        }
+
+        private async Task<bool> PrepareEditViewModelAsync(int id, TicketEditViewModel viewModel)
+        {
+            var createdAt = await _ticketsService.GetTicketCreatedAtAsync(id);
+            if (!createdAt.HasValue)
+            {
+                return false;
+            }
+
+            viewModel.CreatedAt = createdAt.Value;
+            await _ticketsService.FillOptionsAsync(viewModel);
+            return true;
         }
 
         [HttpPost]

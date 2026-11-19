@@ -102,6 +102,14 @@ public class TicketsService
         return viewModel;
     }
 
+    public async Task<DateTime?> GetTicketCreatedAtAsync(int id)
+    {
+        return await _context.Tickets
+            .Where(ticket => ticket.Id == id)
+            .Select(ticket => (DateTime?)ticket.CreatedAt)
+            .SingleOrDefaultAsync();
+    }
+
     public async Task<UpdateTicketResult> UpdateTicketAsync(int id, TicketEditViewModel viewModel)
     {
         var ticket = await _context.Tickets.FindAsync(id);
