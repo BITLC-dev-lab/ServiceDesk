@@ -6,7 +6,7 @@ namespace ServiceDesk.Models
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Name ist erforderlich")]
-        [StringLength(50, ErrorMessage = "Maximal 50 Zeichen")]
+        [StringLength(200, ErrorMessage = "Der Kategoriename darf maximal 50 Zeichen lang sein")]
         public string Name { get; set; } = string.Empty;
     }
 }
