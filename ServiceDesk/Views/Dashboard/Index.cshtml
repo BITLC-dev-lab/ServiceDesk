@@ -9,17 +9,6 @@
 
 <!-- 1. BEREICH: Statistik-Karten (klickbar als Filter ohne JavaScript) -->
 <section class="row g-3 mb-4" aria-label="Ticket-Kennzahlen">
-
-    <!-- Karte: Gesamtzahl (setzt Filter zurück) -->
-    <div class="col-sm-6 col-lg-3">
-        <a asp-action="Index" class="summary-card w-100 text-start text-decoration-none">
-            <div>
-                <strong class="summary-value">@Model.TotalTickets</strong>
-                <span class="summary-label">Tickets Gesamt</span>
-            </div>
-        </a>
-    </div>
-
     <!-- Karte: Status Offen -->
     <div class="col-sm-6 col-lg-3">
         <a asp-action="Index" asp-route-status="@TicketStatus.Offen" class="summary-card summary-card-open w-100 text-start text-decoration-none">

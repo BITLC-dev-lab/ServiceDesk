@@ -17,40 +17,34 @@ namespace ServiceDesk.Services
         }
         public async Task<DashboardViewModel> GetDashboardViewModelAsync(TicketStatus? status, TicketPriority? priority)
         {
-            var query = _context.Tickets
-                .AsNoTracking()
-                .Include(t => t.Category)
-                .Include(t => t.Employee);
-            IQueryable<Ticket> filteredQuery = query;
+            var query = _context.Tickets.AsNoTracking();
+            var allTickets = query;
 
             if (status.HasValue)
-                filteredQuery = filteredQuery.Where(t => t.Status == status.Value);
+                query = query.Where(t => t.Status == status.Value);
 
             if (priority.HasValue)
-                filteredQuery = filteredQuery.Where(t => t.Priority == priority.Value);
+                query = query.Where(t => t.Priority == priority.Value);
 
-            var tickets = new List<TicketViewModel>();
-
-                foreach (var ticket in filteredQuery)
+            var tickets = await query
+                .Select(t => new TicketViewModel
                 {
-                    tickets.Add(new TicketViewModel
-                    {
-                        Id = ticket.Id,
-                        Title = ticket.Title,
-                        CategoryName = ticket.Category.Name,
-                        Priority = ticket.Priority,
-                        Status = ticket.Status,
-                        EmployeeName = ticket.Employee != null ? ticket.Employee.FirstName + " " + ticket.Employee.LastName : string.Empty,
-                        CreatedAt = ticket.CreatedAt
-                    });
-                }
+                    Id = t.Id,
+                    Title = t.Title,
+                    CategoryName = t.Category.Name,
+                    Priority = t.Priority,
+                    Status = t.Status,
+                    EmployeeName = t.Employee != null ? t.Employee.FirstName + " " + t.Employee.LastName : string.Empty,
+                    CreatedAt = t.CreatedAt
+                }).ToListAsync();
+            
                 var viewModel = new DashboardViewModel
                 {
-                    TotalTickets = query.Count(),
-                    OpenTickets = query.Count(t => t.Status == TicketStatus.Offen),
-                    InProgressTickets = query.Count(t => t.Status == TicketStatus.InBearbeitung),
-                    CompletedTickets = query.Count(t => t.Status == TicketStatus.Abgeschlossen),
-                    HighPriorityTickets = query.Count(t => t.Priority == TicketPriority.Hoch),
+                    TotalTickets = allTickets.Count(),
+                    OpenTickets = allTickets.Count(t => t.Status == TicketStatus.Offen),
+                    InProgressTickets = allTickets.Count(t => t.Status == TicketStatus.InBearbeitung),
+                    CompletedTickets = allTickets.Count(t => t.Status == TicketStatus.Abgeschlossen),
+                    HighPriorityTickets = allTickets.Count(t => t.Priority == TicketPriority.Hoch),
                     Tickets = tickets
                 };
             return viewModel;
