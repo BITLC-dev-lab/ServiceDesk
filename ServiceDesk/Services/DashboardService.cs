@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ServiceDesk.Data;
+using ServiceDesk.Models;
 using ServiceDesk.Models.Enums;
 using ServiceDesk.ViewModels;
+using System.Net.NetworkInformation;
 
 namespace ServiceDesk.Services
 {
@@ -13,11 +15,18 @@ namespace ServiceDesk.Services
         {
             _context = context;
         }
-        public async Task<DashboardViewModel> GetDashboardViewModelAsync()
+        public async Task<DashboardViewModel> GetDashboardViewModelAsync(TicketStatus? status, TicketPriority? priority)
         {
-            {
                 var query = _context.Tickets.AsNoTracking();
-                var tickets = new List<TicketViewModel>();
+            var filteredQuery = query;
+
+            if (status.HasValue)
+                filteredQuery = filteredQuery.Where(t => t.Status == status.Value);
+
+            if (priority.HasValue)
+                filteredQuery = filteredQuery.Where(t => t.Priority == priority.Value);
+
+            var tickets = new List<TicketViewModel>();
 
                 foreach (var ticket in query)
                 {
@@ -41,9 +50,7 @@ namespace ServiceDesk.Services
                     HighPriorityTickets = query.Count(t => t.Priority == TicketPriority.Hoch),
                     Tickets = tickets
                 };
-                return viewModel;
-
-            }
+            return viewModel;
         }
     }
 }
