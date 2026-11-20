@@ -1,4 +1,5 @@
 ﻿using ServiceDesk.Models;
+using ServiceDesk.ViewModels;
 
 namespace ServiceDesk.ViewModels
 {
@@ -10,7 +11,7 @@ namespace ServiceDesk.ViewModels
         public int InProgressTickets { get; set; }
         public int CompletedTickets { get; set; }
         public int HighPriorityTickets { get; set; }
-        public List<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public List<TicketViewModel> Tickets { get; set; } = new();
 
     }
 }

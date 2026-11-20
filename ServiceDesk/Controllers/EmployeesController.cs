@@ -7,7 +7,7 @@ namespace ServiceDesk.Controllers
 {
     public class EmployeesController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
         public EmployeesController(ApplicationDbContext context)
         {
             _context = context;
