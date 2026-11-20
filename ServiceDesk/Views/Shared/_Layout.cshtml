@@ -28,6 +28,10 @@
           </span>
         </a>
         <nav class="sd-nav" aria-label="Hauptnavigation">
+          <a class="nav-link @(currentController == "Dashboard" ? "active" : null)"
+            asp-controller="Dashboard"
+            asp-action="Index"
+            aria-current="@(currentController == "Dashboard" ? "page" : null)">Dashboard</a>
           <a
             class="nav-link @(currentController == "Tickets" ? "active" : null)"
             asp-controller="Tickets"

@@ -1,1 +1,159 @@
-﻿
+﻿@model ServiceDesk.ViewModels.DashboardViewModel
+@using ServiceDesk.Models.Enums
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="h3 mb-4">Dashboard</h1>
+
+<!-- 1. BEREICH: Statistik-Karten (klickbar als Filter ohne JavaScript) -->
+<section class="row g-3 mb-4" aria-label="Ticket-Kennzahlen">
+
+    <!-- Karte: Gesamtzahl (setzt Filter zurück) -->
+    <div class="col-sm-6 col-lg-3">
+        <a asp-action="Index" class="summary-card w-100 text-start text-decoration-none">
+            <div>
+                <strong class="summary-value">@Model.TotalTickets</strong>
+                <span class="summary-label">Tickets Gesamt</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Karte: Status Offen -->
+    <div class="col-sm-6 col-lg-3">
+        <a asp-action="Index" asp-route-status="@TicketStatus.Offen" class="summary-card summary-card-open w-100 text-start text-decoration-none">
+            <div>
+                <strong class="summary-value">@Model.OpenTickets</strong>
+                <span class="summary-label">Offene Tickets</span>
+            </div>
+            <span class="summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 5.5h16v4a2.5 2.5 0 0 0 0 5v4H4v-4a2.5 2.5 0 0 0 0-5v-4Z" />
+                    <path d="M9 8v8" />
+                </svg>
+            </span>
+        </a>
+    </div>
+
+    <!-- Karte: Status In Bearbeitung -->
+    <div class="col-sm-6 col-lg-3">
+        <a asp-action="Index" asp-route-status="@TicketStatus.InBearbeitung" class="summary-card summary-card-progress w-100 text-start text-decoration-none">
+            <div>
+                <strong class="summary-value">@Model.InProgressTickets</strong>
+                <span class="summary-label">In Bearbeitung</span>
+            </div>
+            <span class="summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 7v5h-5" />
+                    <path d="M4 17v-5h5" />
+                    <path d="M6.1 8.2A7 7 0 0 1 18.7 7L20 12M4 12l1.3 5A7 7 0 0 0 17.9 15.8" />
+                </svg>
+            </span>
+        </a>
+    </div>
+
+    <!-- Karte: Status Abgeschlossen -->
+    <div class="col-sm-6 col-lg-3">
+        <a asp-action="Index" asp-route-status="@TicketStatus.Abgeschlossen" class="summary-card summary-card-done w-100 text-start text-decoration-none">
+            <div>
+                <strong class="summary-value">@Model.CompletedTickets</strong>
+                <span class="summary-label">Abgeschlossen</span>
+            </div>
+            <span class="summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="8.5" />
+                    <path d="m8.3 12 2.4 2.5 5-5" />
+                </svg>
+            </span>
+        </a>
+    </div>
+
+    <!-- Karte: Hohe Priorität -->
+    <div class="col-sm-6 col-lg-3">
+        <a asp-action="Index" asp-route-priority="@TicketPriority.Hoch" class="summary-card summary-card-high w-100 text-start text-decoration-none">
+            <div>
+                <strong class="summary-value">@Model.HighPriorityTickets</strong>
+                <span class="summary-label">Hohe Priorität</span>
+            </div>
+            <span class="summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 4 21 20H3L12 4Z" />
+                    <path d="M12 9v5M12 17.2v.1" />
+                </svg>
+            </span>
+        </a>
+    </div>
+</section>
+
+<!-- 2. BEREICH: Tabellen-Übersicht -->
+<section class="card sd-card" aria-labelledby="ticket-overview-title">
+    <div class="card-body dashboard-card-header">
+        <h2 class="h5 mb-0" id="ticket-overview-title">Ticketübersicht</h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table sd-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Nr.</th>
+                    <th>Titel</th>
+                    <th>Kategorie</th>
+                    <th>Priorität</th>
+                    <th>Status</th>
+                    <th>Zuständiger Mitarbeiter</th>
+                    <th>Erstellt am</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Tickets.Any())
+                {
+                    @foreach (var ticket in Model.Tickets)
+                    {
+                        var statusBadgeClass = ticket.Status switch
+                        {
+                            TicketStatus.Offen => "badge-offen",
+                            TicketStatus.InBearbeitung => "badge-in-bearbeitung",
+                            TicketStatus.Abgeschlossen => "badge-abgeschlossen",
+                            _ => ""
+                        };
+
+                        var statusText = ticket.Status switch
+                        {
+                            TicketStatus.InBearbeitung => "In Bearbeitung",
+                            _ => ticket.Status.ToString()
+                        };
+
+                        <tr>
+                            <td class="fw-medium text-nowrap">T-@ticket.Id</td>
+                            <td class="title-cell">@ticket.Title</td>
+                            <td>@ticket.CategoryName</td>
+                            <td>
+                                <span class="sd-badge badge-@ticket.Priority.ToString().ToLower()">
+                                    @ticket.Priority
+                                </span>
+                            </td>
+                            <td>
+                                <span class="sd-badge @statusBadgeClass">
+                                    @statusText
+                                </span>
+                            </td>
+                            <td>
+                                @(string.IsNullOrWhiteSpace(ticket.EmployeeName) ? "Nicht zugewiesen" : ticket.EmployeeName)
+                            </td>
+                            <td class="text-nowrap">@ticket.CreatedAt.ToString("dd.MM.yyyy")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-secondary py-4">
+                            Keine Tickets vorhanden.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
