@@ -88,6 +88,5 @@ namespace ServiceDesk.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-
     }
 }
