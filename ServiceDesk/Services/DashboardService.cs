@@ -17,8 +17,11 @@ namespace ServiceDesk.Services
         }
         public async Task<DashboardViewModel> GetDashboardViewModelAsync(TicketStatus? status, TicketPriority? priority)
         {
-                var query = _context.Tickets.AsNoTracking();
-            var filteredQuery = query;
+            var query = _context.Tickets
+                .AsNoTracking()
+                .Include(t => t.Category)
+                .Include(t => t.Employee);
+            IQueryable<Ticket> filteredQuery = query;
 
             if (status.HasValue)
                 filteredQuery = filteredQuery.Where(t => t.Status == status.Value);
@@ -28,7 +31,7 @@ namespace ServiceDesk.Services
 
             var tickets = new List<TicketViewModel>();
 
-                foreach (var ticket in query)
+                foreach (var ticket in filteredQuery)
                 {
                     tickets.Add(new TicketViewModel
                     {
