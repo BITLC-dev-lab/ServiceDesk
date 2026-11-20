@@ -17,7 +17,7 @@ namespace ServiceDesk
             // Services vor dem Build registrieren!
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<TicketsService>();
-
+            builder.Services.AddScoped<DashboardService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
