@@ -635,3 +635,12 @@ textarea:focus-visible,
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+.action-links {
+    align-items: center;
+}
+
+.action-links .btn-link{
+    min-height: auto;
+    line-height: inherit;
+}
