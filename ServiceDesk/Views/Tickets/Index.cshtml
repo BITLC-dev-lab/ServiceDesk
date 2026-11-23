@@ -1,4 +1,5 @@
-﻿@model ServiceDesk.ViewModels.TicketListViewModel
+﻿@using ServiceDesk.Models.Enums 
+@model ServiceDesk.ViewModels.TicketListViewModel
 @{
 	ViewData["Title"] = "Tickets";
 }
@@ -71,12 +72,21 @@
 
 				@foreach (var ticket in Model.Tickets)
 				{
+					
+						var sttusBadgeClass = ticket.Status switch
+						{
+							TicketStatus.Offen => "badge-offen",
+							TicketStatus.InBearbeitung => "badge-in-bearbeitung",
+							TicketStatus.Abgeschlossen => "badge-abgeschlossen",
+							_ => ""
+						};
+										
 					<tr>
 						<td class="fw-medium text-nowrap">@ticket.Id</td>
 						<td class="title-cell">@ticket.Title</td>
 						<td>@ticket.CategoryName</td>
-						<td><span class="sd-badge badge-hoch">@ticket.Priority</span></td>
-						<td><span class="sd-badge badge-offen">@ticket.Status</span></td>
+						<td><span class="sd-badge badge badge-@ticket.Priority.ToString().ToLowerInvariant()">@ticket.Priority</span></td>
+						<td><span class="sd-badge @sttusBadgeClass">@ticket.Status</span></td>
 						<td>@ticket.EmployeeName</td>
 						<td class="text-nowrap">@ticket.CreatedAt.ToString("dd.MM.yyyy")</td>
 						<td class="text-end">
