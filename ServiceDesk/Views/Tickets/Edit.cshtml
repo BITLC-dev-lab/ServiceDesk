@@ -3,14 +3,13 @@
 @{
 	ViewData["Title"] = "Ticket bearbeiten";
 	var ticketId = ViewContext.RouteData.Values["id"];
-	bool isClosed = Model.Status == TicketStatus.Abgeschlossen;
 }
 
 <div class="form-page">
 	<a class="back-link d-inline-block mb-3" asp-controller="Tickets" asp-action="Index">← Zurück zu Tickets</a>
 	<h1 class="h3 mb-1">Ticket bearbeiten</h1>
 	<p class="text-secondary mb-4">Ticketdaten prüfen und aktualisieren.</p>
-	@if (isClosed)
+	@if (Model.IsClosed)
 	{
 		<div class="alert alert-warning d-flex align-items-center justify-content-between">
 			<span>
@@ -38,7 +37,7 @@
 					</div>
 				</div>
 			</div>
-			<fieldset disabled="@isClosed">
+			<fieldset disabled="@Model.IsClosed">
 				<div class="mb-3">
 					<label class="form-label fw-medium" asp-for="Title">Titel <span class="text-danger">*</span></label>
 					<input asp-for="Title" class="form-control" />
@@ -94,7 +93,7 @@
 				</div>
 			</fieldset>
 		</div>
-		@if (!isClosed)
+		@if (!Model.IsClosed)
 		{
 			<div class="card-footer bg-white d-flex justify-content-end gap-2 p-3">
 				<a class="btn btn-outline-secondary" asp-controller="Tickets" asp-action="Index">Abbrechen</a>
