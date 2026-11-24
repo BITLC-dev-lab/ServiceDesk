@@ -42,6 +42,7 @@ public class TicketsService
                 CreatedAt = t.CreatedAt
             })
             .OrderByDescending(t => t.CreatedAt)
+            .ThenByDescending(t => t.Id)
             .ToListAsync();
         var ticketListViewModel = new TicketListViewModel
         {
