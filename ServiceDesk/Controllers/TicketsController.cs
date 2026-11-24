@@ -62,41 +62,32 @@ namespace ServiceDesk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, TicketEditViewModel viewModel)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                if (!await PrepareEditViewModelAsync(id, viewModel))
+                var result = await _ticketsService.UpdateTicketAsync(id, viewModel);
+                switch (result)
                 {
-                    return NotFound();
+                    case UpdateTicketResult.Success:
+                        return RedirectToAction("Index");
+                    case UpdateTicketResult.NotFound:
+                        return NotFound();
+                    case UpdateTicketResult.InvalideStatus:
+                        ModelState.AddModelError(string.Empty, "Abgeschlossene Tickets können nicht bearbeitet werden.");
+                        break;
+                    case UpdateTicketResult.InvalidData:
+                        ModelState.AddModelError(string.Empty, "Bitte überprüfen Sie die eingegebenen Daten.");
+                        break;
+                    default:
+                        return StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten.");
                 }
-                return View(viewModel);
             }
 
-            var result = await _ticketsService.UpdateTicketAsync(id, viewModel);
-            switch (result)
+            if (!await PrepareEditViewModelAsync(id, viewModel))
             {
-                case
-                    UpdateTicketResult.Success:
-                    return RedirectToAction("Index");
-                case
-                    UpdateTicketResult.NotFound:
-                    return NotFound();
-                case UpdateTicketResult.InvalideStatus:
-                    ModelState.AddModelError(string.Empty, "Abgeschlossene Tickets können nicht bearbeitet werden.");
-                    if (!await PrepareEditViewModelAsync(id, viewModel))
-                    {
-                        return NotFound();
-                    }
-                    return View(viewModel);
-                case UpdateTicketResult.InvalidData:
-                    ModelState.AddModelError(string.Empty, "Bitte wählen Sie eine gültige Kategorie, Priorität, Zuständigkeit und einen gültigen Status aus.");
-                    if (!await PrepareEditViewModelAsync(id, viewModel))
-                    {
-                        return NotFound();
-                    }
-                    return View(viewModel);
-                default:
-                    return StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten.");
+                return NotFound();
             }
+
+            return View(viewModel);
         }
 
         [HttpPost]
