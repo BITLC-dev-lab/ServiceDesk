@@ -82,7 +82,7 @@ namespace ServiceDesk.Controllers
                 }
             }
 
-            if (!await PrepareEditViewModelAsync(id, viewModel))
+            if (!await _ticketsService.PrepareEditViewModelAsync(id, viewModel))
             {
                 return NotFound();
             }
@@ -102,19 +102,6 @@ namespace ServiceDesk.Controllers
                 UpdateTicketResult.InvalideStatus => BadRequest("Cannot reopen a ticket that is not closed."),
                 _ => StatusCode(500, "Ein unerwarteter Fehler ist aufgetreten."),
             };
-        }
-
-        private async Task<bool> PrepareEditViewModelAsync(int id, TicketEditViewModel viewModel)
-        {
-            var createdAt = await _ticketsService.GetTicketCreatedAtAsync(id);
-            if (!createdAt.HasValue)
-            {
-                return false;
-            }
-
-            viewModel.CreatedAt = createdAt.Value;
-            await _ticketsService.FillOptionsAsync(viewModel);
-            return true;
         }
 
         [HttpPost]

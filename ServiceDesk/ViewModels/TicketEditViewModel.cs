@@ -8,5 +8,6 @@ namespace ServiceDesk.ViewModels
         [Required(ErrorMessage = "Der Status ist erforderlich.")]
         public TicketStatus? Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsClosed { get; set; }
     }
 }

@@ -82,7 +82,7 @@ public class TicketsService
         return UpdateTicketResult.Success;
     }
 
-    public async Task<TicketFormViewModel?> GetTicketFormViewModelAsync(int id)
+    public async Task<TicketEditViewModel?> GetTicketFormViewModelAsync(int id)
     {
         var ticket = await _context.Tickets.FindAsync(id);
         if (ticket == null)
@@ -97,18 +97,25 @@ public class TicketsService
             CategoryId = ticket.CategoryId,
             EmployeeId = ticket.EmployeeId,
             Status = ticket.Status,
+            IsClosed = ticket.Status == TicketStatus.Abgeschlossen,
             CreatedAt = ticket.CreatedAt
         };
         await FillOptionsAsync(viewModel);
         return viewModel;
     }
 
-    public async Task<DateTime?> GetTicketCreatedAtAsync(int id)
+    public async Task<bool> PrepareEditViewModelAsync(int id, TicketEditViewModel viewModel)
     {
-        return await _context.Tickets
-            .Where(ticket => ticket.Id == id)
-            .Select(ticket => (DateTime?)ticket.CreatedAt)
-            .SingleOrDefaultAsync();
+        var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+        if (ticket == null)
+        {
+            return false;
+        }
+
+        viewModel.CreatedAt = ticket.CreatedAt;
+        viewModel.IsClosed = ticket.Status == TicketStatus.Abgeschlossen;
+        await FillOptionsAsync(viewModel);
+        return true;
     }
 
     public async Task<UpdateTicketResult> UpdateTicketAsync(int id, TicketEditViewModel viewModel)
