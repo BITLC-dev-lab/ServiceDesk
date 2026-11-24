@@ -36,7 +36,10 @@ namespace ServiceDesk.Services
                     Status = t.Status,
                     EmployeeName = t.Employee != null ? t.Employee.FirstName + " " + t.Employee.LastName : string.Empty,
                     CreatedAt = t.CreatedAt
-                }).ToListAsync();
+                })
+                .OrderByDescending(t => t.CreatedAt)
+                .ThenByDescending(t => t.Id)
+                .ToListAsync();
             
                 var viewModel = new DashboardViewModel
                 {
