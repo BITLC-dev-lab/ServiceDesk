@@ -44,6 +44,7 @@ public class TicketsService
             .OrderByDescending(t => t.CreatedAt)
             .ThenByDescending(t => t.Id)
             .ToListAsync();
+
         var ticketListViewModel = new TicketListViewModel
         {
             Tickets = tickets,
@@ -203,5 +204,4 @@ public class TicketsService
         return !viewModel.EmployeeId.HasValue
             || await _context.Employees.AnyAsync(employee => employee.Id == viewModel.EmployeeId.Value);
     }
-
 }
