@@ -28,3 +28,14 @@ Eine ASP.NET-Core-MVC-Anwendung zur Verwaltung von IT-Tickets, Mitarbeitern und 
 5. [http://localhost:5174](http://localhost:5174) im Browser öffnen. Zum Beenden im Terminal `Strg+C` drücken.
 
 Die Datenbankmigration verwendet den im Repository vorhandenen Stand. Die Anwendung startet auf dem Dashboard. Bei einer frischen Datenbank können Kategorien, Mitarbeiter und Tickets über die Oberfläche angelegt werden.
+
+## Testdaten einfügen
+
+Zum Testen und Vorführen der Anwendung steht das SQL-Skript [SQLTestDatenDB.sql](SQLTestDatenDB.sql) im Hauptverzeichnis des Repositories bereit. Es fügt **6 Beispielkategorien, 8 Testmitarbeiter und 25 Testtickets** mit unterschiedlichen Status- und Prioritätswerten in die Datenbank `ServiceDeskDb` ein. Die Testtickets sind am Präfix `[TEST]` erkennbar.
+
+1. Zuerst die Datenbank mit den EF-Core-Migrationen erstellen (siehe **Lokal starten**, Schritt 4).
+2. In SQL Server Management Studio (SSMS) eine Verbindung zur lokalen SQL-Server-Instanz `(localdb)\\MSSQLLocalDB` herstellen.
+3. Die Datenbank **`ServiceDeskDb`** auswählen und die Datei [SQLTestDatenDB.sql](SQLTestDatenDB.sql) öffnen.
+4. Das Skript mit **Ausführen (Execute)** starten und anschließend die Anwendung bzw. die Ticketübersicht aktualisieren.
+
+Das Skript löscht oder ändert keine vorhandenen Datensätze. Bereits vorhandene Beispieldaten werden bei erneutem Ausführen übersprungen. Es ist ausschließlich für lokale Test- und Demonstrationsdaten vorgesehen.
