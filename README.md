@@ -34,7 +34,7 @@ Die Datenbankmigration verwendet den im Repository vorhandenen Stand. Die Anwend
 Zum Testen und Vorführen der Anwendung steht das SQL-Skript [SQLTestDatenDB.sql](SQLTestDatenDB.sql) im Hauptverzeichnis des Repositories bereit. Es fügt **6 Beispielkategorien, 8 Testmitarbeiter und 25 Testtickets** mit unterschiedlichen Status- und Prioritätswerten in die Datenbank `ServiceDeskDb` ein. Die Testtickets sind am Präfix `[TEST]` erkennbar.
 
 1. Zuerst die Datenbank mit den EF-Core-Migrationen erstellen (siehe **Lokal starten**, Schritt 4).
-2. In SQL Server Management Studio (SSMS) eine Verbindung zur lokalen SQL-Server-Instanz `(localdb)\\MSSQLLocalDB` herstellen.
+2. In SQL Server Management Studio (SSMS) eine Verbindung zur lokalen SQL-Server-Instanz `(localdb)\MSSQLLocalDB` herstellen.
 3. Die Datenbank **`ServiceDeskDb`** auswählen und die Datei [SQLTestDatenDB.sql](SQLTestDatenDB.sql) öffnen.
 4. Das Skript mit **Ausführen (Execute)** starten und anschließend die Anwendung bzw. die Ticketübersicht aktualisieren.
 
